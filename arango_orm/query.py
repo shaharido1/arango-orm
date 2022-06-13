@@ -27,6 +27,7 @@ class Query(object):
         self._limit = None
         self._limit_start_record = 0
         self._cursor_ttl = None
+        self.is_distinct = False
 
     def count(self):
         "Return collection count"
@@ -251,10 +252,15 @@ class Query(object):
             aql += "\n RETURN rec"
         # print(aql)
 
+        if self.is_distinct:
+            return_index = aql.find("RETURN") + len("RETURN")
+            print(aql)
+            aql = aql[:return_index] + ' distinct(' + aql[return_index:]
+            aql = aql + ")"
+
         results = self._db.aql.execute(
             aql, bind_vars=self._bind_vars, ttl=self._cursor_ttl
         )
-
         for rec in results:
             only = (
                 [f.name for f in self._return_fields]
