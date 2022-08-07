@@ -254,7 +254,6 @@ class Query(object):
 
         if self.is_distinct:
             return_index = aql.find("RETURN") + len("RETURN")
-            print(aql)
             aql = aql[:return_index] + ' distinct(' + aql[return_index:]
             aql = aql + ")"
 
